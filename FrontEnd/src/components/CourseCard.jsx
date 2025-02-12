@@ -4,6 +4,7 @@ function CourseCard({ course }) {
         <h2 className="text-xl font-bold">{course.title}</h2>
         <p>{course.description}</p>
         <p className="font-bold">Price: ₹{course.price}</p>
+        <p>Instructor: {course.instructor}</p>
       </div>
     );
   }

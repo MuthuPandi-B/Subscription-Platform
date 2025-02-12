@@ -5,6 +5,11 @@ import Subscription from './pages/Subscription';
 import Navbar from './components/Navbar';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import ResetPassword from './components/ResetPassword';
+import Footer from './components/Footer';
+import { PrivacyPolicy, TermsOfService } from './components/Footer';
+import Contact from './components/Contact';
+import ForgotPassword from './components/Forgotpassword';
 
 function App() {
   return (
@@ -17,7 +22,15 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/subscribe" element={<Subscription />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/forgot-password" element={<ForgotPassword/>} />
+
+      
       </Routes>
+      <Footer />
     </Router>
   );
 }

@@ -1,17 +1,22 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api/api";
 import { AuthContext } from "../context/AuthContext";
 
-
 function Courses() {
   const { role } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
+  const [instructor, setInstructor] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null); // Track selected course for updates
+  const [paidCourses, setPaidCourses] = useState([]); // Track paid courses
+  const [studentsPaid, setStudentsPaid] = useState({}); // Track number of students per course
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -23,24 +28,69 @@ function Courses() {
       }
     };
 
+    const fetchPaidCourses = async () => {
+      try {
+        const { data } = await API.get("/auth/get-paid-courses");
+        setPaidCourses(data.paidCourses || []);
+      } catch (err) {
+        console.error("Error fetching paid courses:", err);
+      }
+    };
+
+    const fetchStudentsPaid = async () => {
+      try {
+        const { data } = await API.get("courses/admin/students-paid"); // Endpoint to fetch students per course
+        setStudentsPaid(data || {});
+      } catch (err) {
+        console.error("Error fetching students paid count:", err);
+      }
+    };
+
     fetchCourses();
-  }, []);
+    fetchPaidCourses();
+    if (role === "admin") {
+      fetchStudentsPaid();
+    }
+  }, [role]);
 
   const handleCreateCourse = () => {
     setIsFormOpen(true);
+    setSelectedCourseId(null); // Reset for new course
+    setTitle("");
+    setDescription("");
+    setInstructor("");
+    setPrice(0);
+  };
+
+  const handleEditCourse = (course) => {
+    setIsFormOpen(true);
+    setSelectedCourseId(course._id);
+    setTitle(course.title);
+    setDescription(course.description);
+    setInstructor(course.instructor || "");
+    setPrice(course.price);
   };
 
   const submitCourse = async (e) => {
     e.preventDefault();
-    try {
-      const { data } = await API.post("/courses", { title, description, price });
-      setCourses([...courses, data]);
-      setIsFormOpen(false);
-      setTitle("");
-      setDescription("");
-      setPrice(0);
-    } catch (err) {
-      setError(err.response?.data?.error || "Error creating course");
+    if (selectedCourseId) {
+      // Update course
+      try {
+        const { data } = await API.put(`/courses/${selectedCourseId}`, { title, description, price, instructor });
+        setCourses(courses.map((course) => (course._id === selectedCourseId ? data : course)));
+        setIsFormOpen(false);
+      } catch (err) {
+        setError(err.response?.data?.error || "Error updating course");
+      }
+    } else {
+      // Create new course
+      try {
+        const { data } = await API.post("/courses", { title, description, price, instructor });
+        setCourses([...courses, data]);
+        setIsFormOpen(false);
+      } catch (err) {
+        setError(err.response?.data?.error || "Error creating course");
+      }
     }
   };
 
@@ -53,24 +103,49 @@ function Courses() {
     }
   };
 
-  const handlePayment = async (coursePrice) => {
+  const handlePayment = async (course) => {
     try {
-      const { data } = await API.post("/payment/create-order", { amount: coursePrice, currency: "INR" });
-      
+      const { data } = await API.post("/payment/create-order", { amount: course.price, currency: "INR" });
+  
       if (!data.success) {
         throw new Error("Payment order creation failed");
       }
-      
+  
       const options = {
-        key:"rzp_test_omV4sjUn30W0Mm",
+        key: "rzp_test_omV4sjUn30W0Mm",
         amount: data.order.amount,
         currency: data.order.currency,
         order_id: data.order.id,
         name: "Your App Name",
         description: "Course Purchase",
-        handler: function (response) {
+        handler: async function (response) {
           console.log("Payment Successful!", response);
           alert("Payment Successful!");
+  
+          try {
+            // Step 1: Verify payment on the backend
+            console.log("Verifying payment for course:", course._id);
+
+            const verifyResponse = await API.post("/payment/verify", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              courseId: course._id,
+            });
+  
+            if (verifyResponse.data.success) {
+              // Step 2: Add the course to the user's paid courses
+              await API.post("/auth/add-paid-course", { courseId: course._id });
+  
+              // Step 3: Update the state to show "View Course" button
+              setPaidCourses([...paidCourses, course._id]);
+            } else {
+              alert("Payment verification failed!");
+            }
+          } catch (error) {
+            console.error("Error verifying payment or adding course:", error);
+            alert("An error occurred during payment verification!");
+          }
         },
         prefill: {
           email: "test@example.com",
@@ -80,21 +155,26 @@ function Courses() {
           color: "#3399cc",
         },
       };
-
+  
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
       console.error("Payment Error:", error.message);
+      alert("Payment process failed!");
     }
+  };
+  
+  const handleViewCourse = (courseId) => {
+    navigate(`/courses/${courseId}`); // Redirect to course details page
   };
 
   return (
     <div className="p-5">
       <h1 className="text-2xl font-bold">Available Courses</h1>
-      
+
       {role === "admin" && (
-        <button 
-          onClick={handleCreateCourse} 
+        <button
+          onClick={handleCreateCourse}
           className="bg-blue-500 text-white px-5 py-2 my-3"
         >
           Create Course
@@ -105,7 +185,7 @@ function Courses() {
 
       {isFormOpen && role === "admin" && (
         <div className="border p-5 my-3 bg-gray-100 rounded-lg">
-          <h2 className="text-xl font-bold">Create New Course</h2>
+          <h2 className="text-xl font-bold">{selectedCourseId ? "Update Course" : "Create New Course"}</h2>
           <form onSubmit={submitCourse}>
             <input
               type="text"
@@ -123,6 +203,13 @@ function Courses() {
               required
             />
             <input
+              type="text"
+              placeholder="Instructor"
+              value={instructor}
+              onChange={(e) => setInstructor(e.target.value)}
+              className="w-full p-2 my-2 border rounded"
+            />
+            <input
               type="number"
               placeholder="Price"
               value={price}
@@ -131,11 +218,14 @@ function Courses() {
               required
             />
             <div className="flex gap-3">
-              <button type="submit" className="bg-green-500 text-white px-5 py-2 rounded">
-                Submit
+              <button
+                type="submit"
+                className="bg-green-500 text-white px-5 py-2 rounded"
+              >
+                {selectedCourseId ? "Update" : "Submit"}
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsFormOpen(false)}
                 className="bg-gray-500 text-white px-5 py-2 rounded"
               >
@@ -151,19 +241,40 @@ function Courses() {
           <h2 className="text-xl font-bold">{course.title}</h2>
           <p>{course.description}</p>
           <p className="font-bold">Price: ₹{course.price}</p>
-          <button 
-            onClick={() => handlePayment(course.price)}
-            className="bg-green-500 text-white px-5 py-2 my-3"
-          >
-            Pay ₹{course.price}
-          </button>
           {role === "admin" && (
-            <button 
-              onClick={() => deleteCourse(course._id)} 
-              className="bg-red-500 text-white px-5 py-2 my-3"
+            <p className="text-sm text-gray-600">Students Enrolled: {studentsPaid[course._id] || 0}</p>
+          )}
+          {role !== "admin" && !paidCourses.includes(course._id) && (
+            <button
+              onClick={() => handlePayment(course)}
+              className="bg-green-500 text-white px-5 py-2 my-3"
             >
-              Delete Course
+              Pay ₹{course.price}
             </button>
+          )}
+          {role !== "admin" && paidCourses.includes(course._id) && (
+            <button
+              onClick={() => handleViewCourse(course._id)}
+              className="bg-blue-500 text-white px-5 py-2 my-3"
+            >
+              View Course
+            </button>
+          )}
+          {role === "admin" && (
+            <>
+              <button
+                onClick={() => handleEditCourse(course)}
+                className="bg-blue-500 text-white px-5 py-2 my-3"
+              >
+                Edit Course
+              </button>
+              <button
+                onClick={() => deleteCourse(course._id)}
+                className="bg-red-500 text-white px-5 py-2 my-3"
+              >
+                Delete Course
+              </button>
+            </>
           )}
         </div>
       ))}
