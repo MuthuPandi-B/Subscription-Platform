@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import { PrivacyPolicy, TermsOfService } from './components/Footer';
 import Contact from './components/Contact';
 import ForgotPassword from './components/Forgotpassword';
+import MyCourses from './pages/Mycourses';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
+        <Route path="/my-courses" element={<MyCourses/>} />
 
       
       </Routes>

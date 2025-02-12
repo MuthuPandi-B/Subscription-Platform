@@ -18,7 +18,7 @@ function Login() {
     localStorage.setItem('role', data.role);
     setRole(data.role);
     console.log('Login Success:', data);
-    navigate('/reset-password');
+    navigate('/');
 
   };
 

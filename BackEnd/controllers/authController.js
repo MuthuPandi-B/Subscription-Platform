@@ -81,15 +81,19 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const addPaidCourse = async (userId, courseId) => {
+export const addPaidCourse = async (req,res) => {
   try {
-    const user = await User.findById(userId);
+
+   
+    console.log("inside addpaidcourse", req.body.courseId,req.user.id);
+    const user = await User.findById(req.user.id);
+    console.log("get user");
     if (!user) {
       throw new Error('User not found');
     }
-    user.paidCourses.push(courseId);
-    await user.save();
-    return user;
+    user.paidCourses.push(req.body.courseId);
+   const updatedUser = await user.save();
+   res.status(200).json({ message: 'Paid course added successfully', user: updatedUser });
   } catch (error) {
     throw error;
   }
