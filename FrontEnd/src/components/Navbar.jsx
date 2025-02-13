@@ -29,6 +29,8 @@ function Navbar() {
               <>
               <Link to="/courses" className="mx-2">Courses</Link>
               <Link to="/admin" className="mx-2">Carousel</Link>
+              <Link to="/message" className="mx-2">Subscribed Users</Link>
+
               </>
             )}
             <button onClick={handleLogout} className="mx-2">Logout</button>

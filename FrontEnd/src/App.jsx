@@ -15,6 +15,7 @@ import CourseVideos from './pages/CourseVideos';
 import AdminManageVideos from './pages/AdminManageVideos';
 
 import AdminManageHomeContent from './components/AdminManageHomeContent';
+import AdminSendMessages from './pages/AdminSendMessages';
 
 
 function App() {
@@ -37,6 +38,8 @@ function App() {
         <Route path="/view-course/:courseId" element={<CourseVideos/>} />
         <Route path="/manage-videos/:courseId" element={<AdminManageVideos/>} />
         <Route path='/admin' element={<AdminManageHomeContent/>} />
+        <Route path='/message' element={<AdminSendMessages/>} />
+
         
        
 

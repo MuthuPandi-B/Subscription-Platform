@@ -27,7 +27,7 @@ export const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, role: user.role,email:user.email }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
     res.json({ token, role: user.role });
@@ -35,6 +35,18 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ error: 'Login failed' });
   }
 };
+export const getUserInfo = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id); // Assuming `req.user` is populated by the `protect` middleware
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ email: user.email, name: user.name, role: user.role });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user info" });
+  }
+};
+
 
 
 export const forgotPassword = async (req, res) => {
