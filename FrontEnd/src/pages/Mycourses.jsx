@@ -29,7 +29,7 @@ function MyCourses() {
   }, []);
 
   const handleViewCourse = (courseId) => {
-    navigate(`/courses/${courseId}`); // Navigate to course details page
+    navigate(`/view-course/${courseId}`); // Navigate to course details page
   };
 
   return (

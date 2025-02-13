@@ -11,6 +11,11 @@ import { PrivacyPolicy, TermsOfService } from './components/Footer';
 import Contact from './components/Contact';
 import ForgotPassword from './components/Forgotpassword';
 import MyCourses from './pages/Mycourses';
+import CourseVideos from './pages/CourseVideos';
+import AdminManageVideos from './pages/AdminManageVideos';
+
+import AdminManageHomeContent from './components/AdminManageHomeContent';
+
 
 function App() {
   return (
@@ -29,6 +34,13 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/forgot-password" element={<ForgotPassword/>} />
         <Route path="/my-courses" element={<MyCourses/>} />
+        <Route path="/view-course/:courseId" element={<CourseVideos/>} />
+        <Route path="/manage-videos/:courseId" element={<AdminManageVideos/>} />
+        <Route path='/admin' element={<AdminManageHomeContent/>} />
+        
+       
+
+
 
       
       </Routes>

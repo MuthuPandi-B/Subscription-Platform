@@ -26,7 +26,10 @@ function Navbar() {
               </>
             )}
             {role === 'admin' && (
+              <>
               <Link to="/courses" className="mx-2">Courses</Link>
+              <Link to="/admin" className="mx-2">Carousel</Link>
+              </>
             )}
             <button onClick={handleLogout} className="mx-2">Logout</button>
           </>
