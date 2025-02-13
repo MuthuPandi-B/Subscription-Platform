@@ -1,16 +1,16 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-dotenv.config(); // Ensure environment variables are loaded
+dotenv.config(); 
 
 // Email service function
 export const sendEmail = async (to, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail", // Use your email service (Gmail in this example)
+      service: "gmail", 
       auth: {
-        user: process.env.PASS_MAIL, // Your email address
-        pass: process.env.PASS_KEY, // Your email password or app-specific password
+        user: process.env.PASS_MAIL, 
+        pass: process.env.PASS_KEY,
       },
     });
 

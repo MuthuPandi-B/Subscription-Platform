@@ -21,8 +21,43 @@ export const createOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-    
-    res.json({ success: true, order });
+
+    if (!order) {
+      res.status(500).json({ success: false, message: "Payment failed" });
+    }
+
+    // order.razorpay_order_id
+    // order.razorpay_payment_id
+    // order.razorpay_signature
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    let data = null
+    if (paymentType === "course") {
+      // Step 1: Validate `courseId`
+      if (!mongoose.Types.ObjectId.isValid(req.body.courseId)) {
+        return res.status(400).json({ error: "Invalid course ID" });
+      }
+
+      //Purchase course
+      // if (!user.paidCourses.includes(courseId)) {
+        user.paidCourses.push(req.body.courseId);
+        data = await user.save();
+      // }
+    }else{
+      // Add subscription to `SubscribedUser`
+      const subscribedUser = await SubscribedUser.findOne({ email: user.email });
+      if (!subscribedUser) {
+        const newSubscribedUser = new SubscribedUser({ email: user.email, isSubscribed: true });
+        data = await newSubscribedUser.save();
+      }
+    }
+
+    res.json({ success: true, message: "Payment Verified", data });
+
   } catch (error) {
     console.error("Payment Error:", error);
     res.status(500).json({ error: "Error creating Razorpay order" });
@@ -34,7 +69,7 @@ export const verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentType } = req.body;
 
-   
+    // console.log("Received payload:", { razorpay_order_id, razorpay_payment_id, razorpay_signature, courseId,email });
 
     // Step 2: Verify Razorpay signature
     const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -81,10 +116,9 @@ export const verifyPayment = async (req, res) => {
   }
 };
 
-//Get Subscription Status
 export const getSubscriptionStatus = async (req, res) => {
   try {
-    const email = req.user.email;
+    const email = req.user.email; // Ensure `protect` middleware populates req.user
     if (!email) {
       return res.status(400).json({ error: "User email not found" });
     }

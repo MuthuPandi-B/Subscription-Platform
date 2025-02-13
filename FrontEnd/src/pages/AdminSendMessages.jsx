@@ -1,61 +1,4 @@
-// import { useState } from "react";
-// import API from "../api/api";
 
-// const AdminSendMessages = () => {
-//   const [title, setTitle] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [videoUrl, setVideoUrl] = useState("");
-
-//   const handleSendMessages = async (e) => {
-//     e.preventDefault();
-//     try {
-//       await API.post("/messages/send-messages", { title, description, videoUrl });
-//       alert("Messages sent successfully!");
-//       setTitle("");
-//       setDescription("");
-//       setVideoUrl("");
-//     } catch (error) {
-//       console.error("Error sending messages:", error);
-//       alert("Failed to send messages.");
-//     }
-//   };
-
-//   return (
-//     <div className="p-5">
-//       <h1 className="text-2xl font-bold mb-5">Send Messages to Subscribers</h1>
-//       <form onSubmit={handleSendMessages}>
-//         <input
-//           type="text"
-//           placeholder="Title"
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//           className="w-full p-2 my-2 border rounded"
-//           required
-//         />
-//         <textarea
-//           placeholder="Description"
-//           value={description}
-//           onChange={(e) => setDescription(e.target.value)}
-//           className="w-full p-2 my-2 border rounded"
-//           required
-//         />
-//         <input
-//           type="text"
-//           placeholder="Video URL"
-//           value={videoUrl}
-//           onChange={(e) => setVideoUrl(e.target.value)}
-//           className="w-full p-2 my-2 border rounded"
-//           required
-//         />
-//         <button type="submit" className="bg-blue-500 text-white px-5 py-2 rounded">
-//           Send Messages
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default AdminSendMessages;
 import { useState, useEffect } from "react";
 import API from "../api/api";
 
@@ -65,6 +8,8 @@ const AdminSendMessages = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [subscribedUsers, setSubscribedUsers] = useState([]);
   const [showEmails, setShowEmails] = useState(false); // Toggle email visibility
+  const [loader, setLoader] = useState(false); // Toggle email visibility
+  const [responseStatus, setResponseStatus] = useState(false); // Toggle email visibility
 
   useEffect(() => {
     // Fetch subscribed users when the component mounts
@@ -83,12 +28,26 @@ const AdminSendMessages = () => {
   const handleSendMessages = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/messages/send-messages", { title, description, videoUrl });
-      alert("Messages sent successfully!");
-      setTitle("");
-      setDescription("");
-      setVideoUrl("");
+      setLoader(true);
+      const response = await API.post("/messages/send-messages", {
+        title,
+        description,
+        videoUrl,
+      });
+
+      if (response) {
+        setLoader(false);
+        // setResponseStatus(true);
+        alert("Messages sent successfully!");
+        setTitle("");
+        setDescription("");
+        setVideoUrl("");
+      } else {
+        setLoader(false);
+      }
     } catch (error) {
+      setLoader(false);
+
       console.error("Error sending messages:", error);
       alert("Failed to send messages.");
     }
@@ -148,8 +107,11 @@ const AdminSendMessages = () => {
           className="w-full p-2 my-2 border rounded"
           required
         />
-        <button type="submit" className="bg-blue-500 text-white px-5 py-2 rounded">
-          Send Messages
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-5 py-2 rounded"
+        >
+          {loader ? "Sending..." : "Send Messages"}
         </button>
       </form>
     </div>

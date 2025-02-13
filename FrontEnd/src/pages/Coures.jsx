@@ -140,6 +140,7 @@ function Courses() {
         handler: async function (response) {
           try {
             const verifyResponse = await API.post("/payment/verify", {
+              paymentType: "course",
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -286,17 +287,17 @@ function Courses() {
             <>
               <button
                 onClick={() => handleEditCourse(course)}
-                className="bg-blue-500 text-white px-5 py-2 my-3"
+                className="bg-blue-500 text-white px-5 py-2 my-3 mr-3"
               >
                 Edit Course
               </button>
               <button onClick={() => handleManageVideos(course._id)}
-                className="bg-blue-500 text-white px-5 py-2 my-3">
+                className="bg-yellow-500 text-white px-5 py-2 my-3 mx-3">
                 Manage Videos
               </button>
               <button
                 onClick={() => deleteCourse(course._id)}
-                className="bg-red-500 text-white px-5 py-2 my-3"
+                className="bg-red-500 text-white px-5 py-2 my-3 mx-3"
               >
                 Delete Course
               </button>

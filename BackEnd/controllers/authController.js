@@ -37,7 +37,7 @@ export const loginUser = async (req, res) => {
 };
 export const getUserInfo = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id); // Assuming `req.user` is populated by the `protect` middleware
+    const user = await User.findById(req.user.id); 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -60,8 +60,8 @@ export const forgotPassword = async (req, res) => {
       expiresIn: "1h",
     });
 
-    // Send email with reset link or token
-    const resetLink = `http://localhost:5173/reset-password/${token}`; // Replace with your frontend URL
+    // Send email with reset link
+    const resetLink = `http://localhost:5173/reset-password/${token}`; 
     await sendEmail(
       email,
       "Password Reset Request",

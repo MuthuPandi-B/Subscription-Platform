@@ -58,10 +58,10 @@ const Subscription = () => {
           alert("Payment Successful!");
 
           await API.post("/payment/verify", {
+            paymentType: "subscription",
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            email: user.email, // Assuming you have user's email in state/context
+            razorpay_signature: response.razorpay_signature
           });
   
           // Update UI to show "Subscribed"

@@ -85,7 +85,7 @@ const AdminManageBoxModels = () => {
 
       {boxModels.map((box) => (
         <div key={box._id} className="border p-3 my-3">
-          <img src={box.imageUrl} alt={box.title} className="w-full h-48 object-cover rounded" />
+          <img src={box.imageUrl} alt={box.title} className="w-1/4 h-1/2 object-cover rounded" />
           <h2 className="text-xl font-bold">{box.title}</h2>
           <p>{box.description}</p>
           <button onClick={() => handleEditBox(box)} className="bg-blue-500 text-white px-5 py-2 my-2">
