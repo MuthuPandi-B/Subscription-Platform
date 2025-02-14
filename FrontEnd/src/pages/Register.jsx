@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import API from '../api/api';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 function Register() {
   const navigate = useNavigate();
@@ -61,7 +63,7 @@ function Register() {
         </button>
         <p className="mt-4 text-center">
           Already have an account?{' '}
-          <a href="/login" className="text-blue-500 hover:underline">Login</a>
+      <Link to="/login" className="text-blue-500 hover:underline">Login</Link> 
         </p>
       </div>
     </form>

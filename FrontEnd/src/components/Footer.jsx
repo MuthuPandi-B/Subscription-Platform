@@ -1,11 +1,16 @@
+
+import { Link } from "react-router-dom";
 function Footer() {
     return (
       <footer className="bg-gray-800 text-white py-4 mt-10 text-center">
         <p>&copy; {new Date().getFullYear()} Learning Platform. All Rights Reserved.</p>
         <div className="flex justify-center space-x-4 mt-2">
-          <a href="/privacy-policy" className="text-blue-500 hover:underline">Privacy Policy</a>
-          <a href="/terms-of-service" className="text-blue-500 hover:underline">Terms of Service</a>
-          <a href="/contact" className="text-blue-500 hover:underline">Contact Us</a>
+    
+      <Link to="/privacy-policy" className="text-blue-500 hover:underline">Privacy Policy</Link>
+      <Link to="/terms-of-service" className="text-blue-500 hover:underline">Terms of Service</Link>
+      <Link to="/contact" className="text-blue-500 hover:underline">Contact Us</Link>
+    
+    
         </div>
       </footer>
     );
