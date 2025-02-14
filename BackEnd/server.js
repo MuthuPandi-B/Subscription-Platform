@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin: "https://alearningplatform.netlify.app/",
+        origin: "https://learning-platform-lac.vercel.app/",
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,}
 ));
