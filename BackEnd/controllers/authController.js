@@ -68,7 +68,7 @@ export const forgotPassword = async (req, res) => {
     });
 
     // Send email with reset link
-    const resetLink = `http://localhost:5173/reset-password/${token}`; 
+    const resetLink = `https://alearningplatform.netlify.app/reset-password/${token}`; 
     await sendEmail(
       email,
       "Password Reset Request",
