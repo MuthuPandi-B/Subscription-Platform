@@ -39,13 +39,6 @@ function App() {
         <Route path="/manage-videos/:courseId" element={<AdminManageVideos/>} />
         <Route path='/admin' element={<AdminManageHomeContent/>} />
         <Route path='/message' element={<AdminSendMessages/>} />
-
-        
-       
-
-
-
-      
       </Routes>
       <Footer />
     </Router>
