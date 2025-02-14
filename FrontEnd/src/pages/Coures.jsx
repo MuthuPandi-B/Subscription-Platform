@@ -135,7 +135,7 @@ function Courses() {
         amount: data.order.amount,
         currency: data.order.currency,
         order_id: data.order.id,
-        name: "Your App Name",
+        name: "Learning Platform",
         description: "Course Purchase",
         handler: async function (response) {
           try {

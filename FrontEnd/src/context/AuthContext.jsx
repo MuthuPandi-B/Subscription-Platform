@@ -20,13 +20,13 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken)
-      console.log("Token found:", token); // Debugging: Check if token is present
+      // console.log("Token found:", token); // Debugging: Check if token is present
       const fetchUserInfo = async () => {
         try {
           const { data } = await API.get("/auth/user-info",{
             headers:{Authorization:`Bearer ${storedToken}`},
           });
-          console.log("User data fetched:", data); // Debugging: Check fetched user data
+          // console.log("User data fetched:", data); // Debugging: Check fetched user data
           setUser(data);
         } catch (error) {
           console.error("Failed to fetch user info:", error); // Debugging: Log any errors
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
       fetchUserInfo();
     } else {
-      console.log("No token found"); // Debugging: Log if no token is found
+      // console.log("No token found"); // Debugging: Log if no token is found
     }
   }, []);
 

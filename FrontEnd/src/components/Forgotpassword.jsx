@@ -1,48 +1,56 @@
-import { useState } from "react";
-import API from "../api/api"; // Ensure your API is correctly configured
+import { useState } from 'react';
+import API from '../api/api';
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+function ForgotPassword() {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    try {
-      // Send forgot password request to the backend
-      const { data } = await API.post("/auth/forgot-password", { email });
+    setLoading(true); // Set loading to true
+    setError(''); // Clear previous errors
+    setMessage(''); // Clear previous messages
 
-      // Display success message to the user
-      setMessage("Password reset email sent successfully!");
-      setError(""); // Clear any previous errors
+    try {
+      const { data } = await API.post('/auth/forgot-password', { email });
+      setMessage(data.message || 'Password reset email sent successfully!');
     } catch (err) {
-      setMessage(""); // Clear previous success message
-      setError(err.response?.data?.error || "Forgot password request failed.");
+      setError(err.response?.data?.error || 'Failed to send password reset email. Please try again.');
+    } finally {
+      setLoading(false); // Set loading to false
     }
   };
 
   return (
-    <div className="p-5">
-      <h1 className="text-2xl font-bold">Forgot Password</h1>
-      <form onSubmit={handleForgotPassword} className="border p-5 my-3 bg-gray-100 rounded-lg">
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 my-2 border rounded"
-          required
-        />
-        <button type="submit" className="bg-blue-500 text-white px-5 py-2 rounded">
-          Submit
-        </button>
-      </form>
-
-      {/* Display success or error message */}
-      {message && <p className="text-green-500">{message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
+        <h1 className="text-2xl font-bold mb-5 text-center">Forgot Password</h1>
+        <form onSubmit={handleForgotPassword} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border rounded-md"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-600"
+            disabled={loading} // Disable button when loading
+          >
+            {loading ? 'Sending...' : 'Submit'}
+          </button>
+        </form>
+        {message && <p className="text-green-500 text-sm mt-3 text-center">{message}</p>}
+        {error && <p className="text-red-500 text-sm mt-3 text-center">{error}</p>}
+      </div>
     </div>
   );
-};
+}
 
 export default ForgotPassword;

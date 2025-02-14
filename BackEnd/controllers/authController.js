@@ -4,11 +4,18 @@ import User from '../models/User.js';
 import dotenv from 'dotenv';   
 import { sendEmail } from '../config/emailService.js'; 
 
+
+
 dotenv.config();
 
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+  
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword });
     await user.save();

@@ -11,7 +11,7 @@ function MyCourses() {
     const fetchPaidCourses = async () => {
       try {
         const { data } = await API.get("/auth/get-paid-courses");
-        console.log("Fetched Paid Courses:", data.paidCourses); // Debug log
+        // console.log("Fetched Paid Courses:", data.paidCourses); // Debug log
         if (data.paidCourses) {
           // Filter out duplicates
           const uniqueCourses = data.paidCourses.filter(
