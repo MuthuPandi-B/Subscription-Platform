@@ -1,0 +1,1 @@
+A full-stack subscription-based learning platform where users can browse courses, make payments using Razorpay, subscribe to premium content, and view videos after subscription. Admins can manage courses, videos, and send messages to subscribed users.
