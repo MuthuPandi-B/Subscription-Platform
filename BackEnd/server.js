@@ -15,10 +15,9 @@ const app = express();
 
 app.use(cors(
     {
-        origin: "https://learning-platform-txgv.onrender.com",
+        origin: "https://alearningplatform.netlify.app/",
         methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    }
+        credentials: true,}
 ));
 app.use(express.json());
 app.use("/api/auth", authRoutes);

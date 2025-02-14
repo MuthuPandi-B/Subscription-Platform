@@ -13,7 +13,6 @@ import ForgotPassword from './components/Forgotpassword';
 import MyCourses from './pages/Mycourses';
 import CourseVideos from './pages/CourseVideos';
 import AdminManageVideos from './pages/AdminManageVideos';
-
 import AdminManageHomeContent from './components/AdminManageHomeContent';
 import AdminSendMessages from './pages/AdminSendMessages';
 
