@@ -15,7 +15,7 @@ const app = express();
 
 app.use(cors(
     {
-        origin: "https://learning-platform-lac.vercel.app",
+        origin: ["http://localhost:5173","https://learning-platform-lac.vercel.app"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,}
 ));

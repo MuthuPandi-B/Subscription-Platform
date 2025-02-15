@@ -1,7 +1,7 @@
-import { useState,useContext,useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import API from "../api/api";
-import {AuthContext} from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const Subscription = () => {
   const [amount, setAmount] = useState(500);
@@ -11,32 +11,26 @@ const Subscription = () => {
   useEffect(() => {
     // Fetch subscription status on page load
     const fetchSubscriptionStatus = async () => {
-      if (user && user.email) {
-        try {
-          const { data } = await API.get("/payment/subscription-status",
-            {params:{timestamp:Date.now()},
-          });
-          // console.log("Fetched subscription status:", data.isSubscribed); 
-          setIsSubscribed(data.isSubscribed);
-        } catch (error) {
-          console.error("Failed to fetch subscription status front:", error);
-        }
+      try {
+        const { data } = await API.get("/payment/subscription-status", {
+          params: { timestamp: Date.now() },
+        });
+        console.log("Fetched subscription status:", data.isSubscribed);
+        setIsSubscribed(data.isSubscribed);
+        console.log("isSubscribed:", isSubscribed);
+      } catch (error) {
+        console.error("Failed to fetch subscription status front:", error);
       }
     };
 
     fetchSubscriptionStatus();
   }, [user]);
 
-
   const handlePayment = async () => {
-    if (!user) {
-      alert("Please log in to subscribe.");
-      return;
-    }
     try {
-      const { data } = await API.post("/payment/create-order", { 
-        amount, 
-        currency: "INR" 
+      const { data } = await API.post("/payment/create-order", {
+        amount,
+        currency: "INR",
       });
 
       if (!data.order) {
@@ -50,7 +44,7 @@ const Subscription = () => {
         order_id: data.order.id,
         name: "Learning Platform",
         description: "Premium Subscription",
-        handler:async function (response) {
+        handler: async function (response) {
           if (!user || !user.email) {
             throw new Error("User email is not available.");
           }
@@ -61,13 +55,12 @@ const Subscription = () => {
             paymentType: "subscription",
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature
+            razorpay_signature: response.razorpay_signature,
           });
-  
+
           // Update UI to show "Subscribed"
           const { data } = await API.get("/payment/subscription-status");
           setIsSubscribed(data.isSubscribed); // Update the state with the latest status
-          
         },
         prefill: {
           email: "test@example.com",
@@ -76,14 +69,10 @@ const Subscription = () => {
         theme: {
           color: "#3399cc",
         },
-        
       };
-      
-
 
       const rzp = new window.Razorpay(options);
       rzp.open(); // ✅ Opens Razorpay checkout
-
     } catch (error) {
       console.error("Payment Error:", error.message);
     }
@@ -105,20 +94,25 @@ const Subscription = () => {
       ) : (
         <p className="text-green-600 font-bold">Subscribed</p>
       )}
-<div className=" p-6 rounded-lg shadow-md max-w-md mx-auto text-center">
-  <h3 className="text-2xl font-bold text-gray-800 mb-4">Why Subscribe?</h3>
-  <p className="text-gray-600 mb-4">
-    By subscribing, you'll gain access to exclusive benefits:
-  </p>
-  <ul className="text-gray-600 mb-4 list-disc list-inside text-left">
-    <li>Receive email notifications with links to all newly listed premium videos as soon as they're released.</li>
-    <li>Stay updated and never miss out on the latest content.</li>
-  </ul>
-  <p className="text-gray-500 text-sm mb-4">
-    Terms and conditions apply. Please review our subscription terms for more details.
-  </p>
- 
-</div>
+      <div className=" p-6 rounded-lg shadow-md max-w-md mx-auto text-center">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">
+          Why Subscribe?
+        </h3>
+        <p className="text-gray-600 mb-4">
+          By subscribing, you'll gain access to exclusive benefits:
+        </p>
+        <ul className="text-gray-600 mb-4 list-disc list-inside text-left">
+          <li>
+            Receive email notifications with links to all newly listed premium
+            videos as soon as they're released.
+          </li>
+          <li>Stay updated and never miss out on the latest content.</li>
+        </ul>
+        <p className="text-gray-500 text-sm mb-4">
+          Terms and conditions apply. Please review our subscription terms for
+          more details.
+        </p>
+      </div>
       {/* Terms and Conditions Section */}
       <p
         className="text-blue-500 underline cursor-pointer mt-4"
@@ -155,5 +149,4 @@ const Subscription = () => {
   );
 };
 
-  
 export default Subscription;
