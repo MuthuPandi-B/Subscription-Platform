@@ -1,8 +1,11 @@
-# React + Vite
+# 📚 Subscription-Based Learning Platform (Frontend)  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The **Subscription-Based Learning Platform** is a modern, responsive, and user-friendly platform for online learning. Built with **React** and styled using **Tailwind CSS**, it offers seamless navigation for students and administrators.  
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features  
+- 🎓 **Browse Courses** – View available courses before subscribing.  
+- 💳 **Secure Payments** – Make payments using **Razorpay**.  
+- 🔓 **Premium Content Access** – Unlock videos after subscribing.  
+- 📜 **Subscription Management** – Users can track their subscriptions.  
+- 🎥 **Video Streaming** – Watch course content directly on the platform.  
+- 🛠 **Admin Panel** – Manage courses, videos, and send messages to users.  
